@@ -41,6 +41,10 @@ const UserSchema = new mongoose.Schema({
         type: Array,
         default: [],
     },
+    blocked: {
+        type: Boolean,
+        default: false,
+    }
 })
 
 module.exports = mongoose.model.Users || mongoose.model("Users", UserSchema);
