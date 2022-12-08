@@ -12,6 +12,7 @@
   },
   "author": "pegimon",
   "license": "ISC",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/cs309project/Crowd-sGossipBackend/issues"
   },
