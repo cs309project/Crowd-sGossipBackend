@@ -2,7 +2,7 @@ import express from 'express'
 import mongoose from 'mongoose'
 
 const app = express()
-const src = "mongodb+srv://CodesGossip:code12345678@codesgossip.zsb2lgn.mongodb.net/?retryWrites=true&w=majority"
+const src = "mongodb+srv://CodesGossip:@codesgossip.zsb2lgn.mongodb.net/?retryWrites=true&w=majority"
 
 mongoose.set('strictQuery', false)
 mongoose.connect(src).then(()=>console.log('database connection succesful'))
