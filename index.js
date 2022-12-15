@@ -1,10 +1,12 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
-import router from './src/routes/user.route.js'
+import userRouter from './src/routes/user.route.js'
+import postRouter from "./src/routes/post.route.js";
 dotenv.config()
 const app = express()
-app.use(router)
+app.use(userRouter)
+app.use(postRouter)
 const src = process.env.db
 const PORT = process.env.PORT || 5000
 mongoose.set('strictQuery', false)
