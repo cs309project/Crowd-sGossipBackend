@@ -31,3 +31,29 @@ async function addPost({author, content}) {
     await newPost.save()
     return newPost
 }
+
+export const postUpdate = async (req, res) => {
+    let {_id , content} = req.body
+
+    _id = mongoose.Types.ObjectId(_id)
+
+    if (!_id || !content){
+        error = {error: "Id is not provided or empty content"}
+        console.log('error', error);
+        return res.status(401).send(error)
+    }
+
+    await updatePost({_id , content}).then(e => {
+        return res.status(200).send(e)
+    }).catch(err => {
+        console.log('err', err.message);
+        return res.status(401).send({error: err.message})
+    })
+}
+
+async function updatePost({_id , content})  {
+
+    const editpost = await Post.findByIdAndUpdate({_id} , {content}, {new: true});
+
+    return editpost;
+}
