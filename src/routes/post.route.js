@@ -5,5 +5,6 @@ const parser = bodyParser.json()
 const router = Router()
 
 router.post('/addPost', parser, postController.post)
+router.post('/updatePost', parser, postController.postUpdate)
 router.get('/getPostById', parser, postController.postGet)
 export default router
