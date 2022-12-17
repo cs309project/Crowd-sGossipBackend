@@ -31,3 +31,26 @@ async function addPost({author, content}) {
     await newPost.save()
     return newPost
 }
+
+export const postGet = async (req, res) => {
+    let {_id} = req.body
+    _id = mongoose.Types.ObjectId(_id)
+
+    if (!_id) {
+        error = {error: "No id provided"}
+        console.log('error', error);
+        return res.status(401).send(error)
+    }
+
+    await getPostById({_id}).then(e => {
+        res.status(200).send(e)
+    }).catch(err => {
+        console.log('err', err.message);
+        return res.status(401).send({error: err.message})
+    })
+}
+
+async function getPostById({_id}) {
+    const post = await Post.findById({_id})
+    return post
+}
