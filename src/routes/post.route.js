@@ -6,5 +6,5 @@ const router = Router()
 
 router.post('/addPost', parser, postController.postAdd)
 router.post('/deletePost', parser, postController.postDelete)
-
+router.get('/getPostById', parser, postController.postGet)
 export default router
