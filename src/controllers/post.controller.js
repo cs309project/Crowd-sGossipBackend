@@ -49,6 +49,23 @@ export const postUpdate = async (req, res) => {
         return res.status(401).send({error: err.message})
     })
 }
+export const postDelete = async (req , res) => {
+    let {_id} = req.body
+
+    _id = mongoose.Types.ObjectId(_id)
+
+    if(!_id){
+        error = {error: "No Id provided"}
+        console.log('error', error);
+        return res.status(401).send(error)
+    }
+    await deletePost(_id).then(e => {
+        return res.status(200).send(e)
+    }).catch(err => {
+        console.log('err', err.message);
+        return res.status(401).send({error: err.message})
+    })
+}
 
 export const postGet = async (req, res) => {
     let {_id} = req.body
@@ -72,6 +89,11 @@ async function updatePost({_id , content})  {
     const editpost = await Post.findByIdAndUpdate({_id} , {content}, {new: true});
 
     return editpost;
+}
+
+async function deletePost({_id}){
+    const removepost = await Post.findByIdAndDelete({_id});
+    return removepost;
 }
 
 async function getPostById({_id}) {
