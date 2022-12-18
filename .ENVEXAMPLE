@@ -1,2 +1,2 @@
-db="mongodb+srv://<username>:<password>@cluster.mongodb.net/?retryWrites=true&w=majority"
+db; //database url wheather its localhost or remote cluster
 PORT; //for port number
