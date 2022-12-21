@@ -131,3 +131,30 @@ export const postAddComment = async (req, res) => {
         return res.status(401).send({ error: err.message })
     })
 }
+
+async function updateComment({ _id, commenter, time, updatedComment }) {
+    const post = await Post.findByIdAndUpdate({ _id }, {
+        $set: { 'comments.$[comment].comment': updatedComment }
+    }, { arrayFilters: [{ 'comment.commenter': commenter, 'comment.time': time }] })
+    return post
+}
+
+export const postUpdateComment = async (req, res) => {
+    let { _id, commenter, time, updatedComment } = req.body
+    _id = mongoose.Types.ObjectId(_id)
+    commenter = mongoose.Types.ObjectId(commenter)
+    time = new Date(time)
+
+    if (!commenter || !time) {
+        error = { error: "Couldn't find post" }
+        console.log('error', error);
+        return res.status(400).send(error)
+    }
+
+    await updateComment({ _id, commenter, time, updatedComment }).then(e => {
+        return res.status(200).send(e)
+    }).catch(err => {
+        console.log('err', err.message);
+        return res.status(401).send({ error: err.message })
+    })
+}
