@@ -8,4 +8,7 @@ router.post('/deletePost', postController.postDelete)
 router.get('/getPostById', postController.postGet)
 router.post('/addComment', postController.postAddComment)
 router.post('/updateComment', postController.postUpdateComment)
+router.post('/addUpVote', postController.postAddUpVote)
+router.post('/removeUpVote', postController.postRemoveUpVote)
+router.get('/getUpVoters', postController.postGetUpVoters)
 export default router
