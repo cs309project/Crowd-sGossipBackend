@@ -192,6 +192,25 @@ export const postAddDownVoter = async (req, res) => {
     })
 }
 
+export const postAddUpVote = async (req, res) => {
+    let { _id, upVoter } = req.body
+    _id = mongoose.Types.ObjectId(_id)
+    upVoter = mongoose.Types.ObjectId(upVoter)
+
+    if (!_id || !upVoter) {
+        error = { error: "unknown post or user" }
+        console.log('error', error);
+        return res.status(400).send(error)
+    }
+
+    await AddUpVote({ _id, upVoter }).then(e => {
+        return res.status(200).send(e)
+    }).catch(err => {
+        console.log('err', err.message);
+        return res.status(401).send({ error: err.message })
+    })
+}
+
 async function removeDownVoterInPost({_id , downVoters}){
     const downVoteDOC = await Post.findByIdAndUpdate({ _id }, {
         $pull: { 'downVoters':  downVoters}
@@ -225,6 +244,32 @@ export const postRemoveDownVoter = async (req, res) => {
     })
 }
 
+async function AddUpVote({ _id, upVoter }) {
+    const updatedPost = await Post.findByIdAndUpdate({ _id }, {
+        $push: { 'upVoters': upVoter }
+    }, { new: true })
+    return updatedPost
+}
+
+export const postRemoveUpVote = async (req, res) => {
+    let { _id, upVoter } = req.body
+    _id = mongoose.Types.ObjectId(_id)
+    upVoter = mongoose.Types.ObjectId(upVoter)
+
+    if (!_id || !upVoter) {
+        error = { error: "unknown post or user" }
+        console.log('error', error);
+        return res.status(400).send(error)
+    }
+
+    await RemoveUpVote({ _id, upVoter }).then(e => {
+        return res.status(200).send(e)
+    }).catch(err => {
+        console.log('err', err.message);
+        return res.status(401).send({ error: err.message })
+    })
+}
+
 export const postListDownVoters = async (req, res) => {
     let { _id } = req.body
     _id = mongoose.Types.ObjectId(_id)
@@ -236,6 +281,31 @@ export const postListDownVoters = async (req, res) => {
     }
     await getPostById({ _id }).then(e => {
         res.status(200).send(e.downVoters)
+    }).catch(err => {
+        console.log('err', err.message);
+        return res.status(401).send({ error: err.message })
+    })
+}
+
+async function RemoveUpVote({ _id, upVoter }) {
+    const updatedPost = await Post.findByIdAndUpdate({ _id }, {
+        $pull: { 'upVoters': upVoter }
+    }, { new: true })
+    return updatedPost
+}
+
+export const postGetUpVoters = async (req, res) => {
+    let { _id } = req.body
+    _id = mongoose.Types.ObjectId(_id)
+
+    if (!_id) {
+        error = { error: "Post can not found" }
+        error = { error: "No id provided" }
+        console.log('error', error);
+        return res.status(401).send(error)
+    }
+    await getPostById({ _id }).then(e => {
+        res.status(200).send(e.upVoters)
     }).catch(err => {
         console.log('err', err.message);
         return res.status(401).send({ error: err.message })
