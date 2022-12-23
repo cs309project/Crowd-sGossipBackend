@@ -135,7 +135,7 @@ export const postAddComment = async (req, res) => {
 async function updateComment({ _id, commenter, time, updatedComment }) {
     const post = await Post.findByIdAndUpdate({ _id }, {
         $set: { 'comments.$[comment].comment': updatedComment }
-    }, { arrayFilters: [{ 'comment.commenter': commenter, 'comment.time': time }] })
+    }, { arrayFilters: [{ 'comment.commenter': commenter, 'comment.time': time }], new: true })
     return post
 }
 
@@ -236,6 +236,40 @@ export const postListDownVoters = async (req, res) => {
     }
     await getPostById({ _id }).then(e => {
         res.status(200).send(e.downVoters)
+    }).catch(err => {
+        console.log('err', err.message);
+        return res.status(401).send({ error: err.message })
+    })
+}
+
+async function deleteComment({ _id, commenter, time }) {
+    const post = await Post.findByIdAndUpdate({ _id }, {
+        $pull: { 'comments': { commenter, time } }
+    }, { new: true })
+
+    return post
+}
+
+export const postDeleteComment = async (req, res) => {
+    let { _id, commenter, time } = req.body
+    _id = mongoose.Types.ObjectId(_id)
+    commenter = mongoose.Types.ObjectId(commenter)
+    time = new Date(time)
+
+    if (!_id) {
+        error = { error: "Post is not found" }
+        console.log('error', error);
+        return res.status(400).send(error)
+    }
+
+    if (!commenter || !time) {
+        error = { error: "Couldn't find comment" }
+        console.log('error', error);
+        return res.status(400).send(error)
+    }
+
+    await deleteComment({ _id, commenter, time }).then(e => {
+        return res.status(200).send(e)
     }).catch(err => {
         console.log('err', err.message);
         return res.status(401).send({ error: err.message })

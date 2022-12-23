@@ -11,4 +11,5 @@ router.post('/updateComment', postController.postUpdateComment)
 router.post('/addDownVoter', postController.postAddDownVoter)
 router.post('/removeDownVoter', postController.postRemoveDownVoter)
 router.get('/getDownVoters', postController.postListDownVoters)
+router.post('/deleteComment', postController.postDeleteComment)
 export default router
