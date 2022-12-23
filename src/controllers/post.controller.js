@@ -158,3 +158,86 @@ export const postUpdateComment = async (req, res) => {
         return res.status(401).send({ error: err.message })
     })
 }
+
+async function addDownVoterInPost({ _id, downVoters }) {
+    const downVoteDOC = await Post.findByIdAndUpdate({ _id }, {
+        $push: { 'downVoters':  downVoters}
+    }, { new: true })
+
+    return downVoteDOC
+}
+
+export const postAddDownVoter = async (req, res) => {
+    let { _id, downVoters } = req.body
+    _id = mongoose.Types.ObjectId(_id)
+    downVoters = mongoose.Types.ObjectId(downVoters)
+
+    if (!_id) {
+        error = { error: "Post can not found" }
+        console.log('error', error)
+        return res.status(400).send(error)
+    }
+
+    if (!downVoters) {
+        error = { error: "User not found" }
+        console.log('error', error)
+        return res.status(400).send(error)
+    }
+
+    await addDownVoterInPost({ _id, downVoters }).then(e => {
+        return res.status(200).send(e)
+    }).catch(err => {
+        console.log('err', err.message);
+        return res.status(401).send({ error: err.message })
+    })
+}
+
+async function removeDownVoterInPost({_id , downVoters}){
+    const downVoteDOC = await Post.findByIdAndUpdate({ _id }, {
+        $pull: { 'downVoters':  downVoters}
+    }, { new: true })
+
+    return downVoteDOC
+}
+
+export const postRemoveDownVoter = async (req, res) => {
+    let { _id, downVoters } = req.body
+    _id = mongoose.Types.ObjectId(_id)
+    downVoters = mongoose.Types.ObjectId(downVoters)
+
+    if (!_id) {
+        error = { error: "Post can not found" }
+        console.log('error', error)
+        return res.status(400).send(error)
+    }
+
+    if (!downVoters) {
+        error = { error: "User not found" }
+        console.log('error', error)
+        return res.status(400).send(error)
+    }
+
+    await removeDownVoterInPost({ _id, downVoters }).then(e => {
+        return res.status(200).send(e)
+    }).catch(err => {
+        console.log('err', err.message);
+        return res.status(401).send({ error: err.message })
+    })
+}
+
+export const postListDownVoters = async (req, res) => {
+    let { _id } = req.body
+    _id = mongoose.Types.ObjectId(_id)
+
+    if (!_id) {
+        error = { error: "Post can not found" }
+        console.log('error', error);
+        return res.status(401).send(error)
+    }
+    await getPostById({ _id }).then(e => {
+        res.status(200).send(e.downVoters)
+    }).catch(err => {
+        console.log('err', err.message);
+        return res.status(401).send({ error: err.message })
+    })
+}
