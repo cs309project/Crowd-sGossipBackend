@@ -1,5 +1,48 @@
+import bcrypt from "bcrypt"
+
 import User from '../models/User.model.js'
 export const get = async (req,res)=>{
     const user = await User.find().select('-password')
     res.send(user)
 }
+
+
+export const register = async (req, res, next) => {
+  try {
+    const { username, email, password } = req.body;
+    const usernameCheck = await User.findOne({ email });
+    if (usernameCheck)
+      return res.json({ msg: "Username already used ", status: false });
+    const emailCheck = await User.findOne({ email });
+    if (emailCheck)
+      return res.json({ msg: "Email already used ", status: false });
+    const hashedpassword = await bcrypt.hash(password, 10);
+    const user = await user.create({
+      email,
+      username,
+      password: hashedpassword,
+    });
+    delete user.password;
+    return res.json({ status: true, user });
+  } catch (ex) {
+    next(ex);
+  }
+};
+//code for register
+export const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user)
+      return res.json({ msg: "Incorrect username or password", status: false });
+    const ispasswordValid = await bcrypt.compare(password, user.password);
+    if (!ispasswordValid)
+      return res.json({ msg: "Incorrect username or password", status: false });
+
+    delete user.password;
+    return res.json({ status: true, user });
+  } catch (ex) {
+    next(ex);
+  }
+};
+//code for register
