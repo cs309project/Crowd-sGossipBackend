@@ -57,7 +57,6 @@ export const userSearch=async(req,res)=>{
 }
 export const userPage= async (req, res)=> {
   var id = req.params.id;
-  console.log(id)
   if (!id){
     return res.status(401).send({ error: "No ID provided " });
     
