@@ -1,3 +1,4 @@
-db; //database url wheather its localhost or remote cluster
+DB; //database url wheather its localhost or remote cluster
 PORT; //for port number
-SALT;
+PAPER;//password you will use to hash
+SALT;//salt rounds for the hash

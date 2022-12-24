@@ -1,6 +1,12 @@
 import bcrypt from "bcrypt"
-
+import config from '../../config.js'
 import User from '../models/User.model.js'
+
+const hashPass = (password) => {
+  const salt = parseInt(config.salt,10);
+  return bcrypt.hashSync(`${password}${config.paper}`, salt);
+}
+
 export const get = async (req,res)=>{
     const user = await User.find().select('-password')
     res.send(user)
@@ -10,39 +16,33 @@ export const get = async (req,res)=>{
 export const register = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
-    const usernameCheck = await User.findOne({ email });
-    if (usernameCheck)
-      return res.json({ msg: "Username already used ", status: false });
     const emailCheck = await User.findOne({ email });
     if (emailCheck)
       return res.json({ msg: "Email already used ", status: false });
-    const hashedpassword = await bcrypt.hash(password, 10);
-    const user = await user.create({
-      email,
-      username,
-      password: hashedpassword,
+    const user = await User.create({
+      email:email,
+      name:username,
+      password: hashPass(password),
     });
-    delete user.password;
-    return res.json({ status: true, user });
+    return res.status(200).json(user);
   } catch (ex) {
     next(ex);
   }
 };
-//code for register
+
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email:email });
     if (!user)
-      return res.json({ msg: "Incorrect username or password", status: false });
-    const ispasswordValid = await bcrypt.compare(password, user.password);
+      return res.status(401).json({msg: "Incorrect username or password"});
+    const ispasswordValid = await bcrypt.compareSync(`${password}${config.paper}`, user.password);
     if (!ispasswordValid)
       return res.json({ msg: "Incorrect username or password", status: false });
 
     delete user.password;
-    return res.json({ status: true, user });
+    return res.status(200).json(user);
   } catch (ex) {
     next(ex);
   }
 };
-//code for register

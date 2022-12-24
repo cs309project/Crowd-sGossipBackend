@@ -1,16 +1,15 @@
 import express from 'express'
 import mongoose from 'mongoose'
-import dotenv from 'dotenv'
 import router from './src/routes/index.js'
-dotenv.config()
+import config from './config.js'
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({
     extended:true
 }))
 app.use(router)
-const src = process.env.db
-const PORT = process.env.PORT || 5000
+const src = config.db
+const PORT = config.port || 5000
 mongoose.set('strictQuery', false)
 mongoose.connect(src).then(()=>console.log('database connection succesful'))
 
