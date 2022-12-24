@@ -58,10 +58,11 @@ export const userPage= async (req, res)=> {
   var id = req.params.id;
   console.log(id)
   if (!id){
-    return res.json({ msg: "No ID provided ", status: false });
+    return res.status(401).send({ error: "No ID provided " });
+    
   }
   else{
-    getbyid(id).then(user=> {return res.json({ status: true, user })})
+    getbyid(id).then(user=> {return res.send(user )})
   }
 }
 const getbyid = async (id)=>{
