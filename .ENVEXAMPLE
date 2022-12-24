@@ -1,2 +1,3 @@
 db; //database url wheather its localhost or remote cluster
 PORT; //for port number
+SALT;
