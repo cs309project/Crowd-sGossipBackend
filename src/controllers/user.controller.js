@@ -46,3 +46,11 @@ export const login = async (req, res, next) => {
   }
 };
 //code for register
+
+export const userSearch=async(req,res)=>{
+  let {
+      sname
+  } = req.body
+  const users=await User.find({name: { $regex: sname, $options: "i" }}).select('name','_id')
+  return res.status(200).send(users)
+}
