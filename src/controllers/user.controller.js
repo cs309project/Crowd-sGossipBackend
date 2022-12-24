@@ -53,5 +53,18 @@ export const userSearch=async(req,res)=>{
       sname
   } = req.body
   const users=await User.find({name: { $regex: sname, $options: "i" }}).select('name','_id')
-  return res.status(200).send(users)
+  return res.json({ status: true, users })
+}
+export const userPage= async (req, res)=> {
+  var id = req.params.id;
+  if (!id){
+    return res.status(401).send({ error: "No ID provided " });
+    
+  }
+  else{
+    getbyid(id).then(user=> {return res.send(user )})
+  }
+}
+const getbyid = async (id)=>{
+  return await User.findById(id).select('-password')
 }
