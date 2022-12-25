@@ -8,4 +8,5 @@ router.get('/user/:id',userController.userPage)
 router.post("/register", userController.register);
 router.post("/login", userController.login);
 router.post('/userSearch', userController.userSearch)
+router.post('/followUser', userController.userFollow)
 export default router
