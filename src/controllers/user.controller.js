@@ -73,27 +73,42 @@ const getbyid = async (id) => {
 
 
 const followUser = async ({ idFollower, idToFollow }) => {
-  const createdChat = await createChat()
-  const followerUser = await User.findByIdAndUpdate({ _id: idFollower }, {
-    $push: {
-      'chats': {
-        chatId: createdChat._id,
-        user: idToFollow
-      },
-      'following': idToFollow
-    }
-  }, { new: true })
+  if (await chatExists(idFollower, idToFollow)) {
+    const followerUser = await User.findByIdAndUpdate({ _id: idFollower }, {
+      $push: {
+        'following': idToFollow
+      }
+    }, { new: true })
 
-  const followedUser = await User.findByIdAndUpdate({ _id: idToFollow }, {
-    $push: {
-      'chats': {
-        chatId: createdChat._id,
-        user: idFollower
-      },
-      'followers': idFollower
-    }
-  }, { new: true })
-  return { followerUser, followedUser, createdChat }
+    const followedUser = await User.findByIdAndUpdate({ _id: idToFollow }, {
+      $push: {
+        'followers': idFollower
+      }
+    }, { new: true })
+    return { followerUser, followedUser }
+  } else {
+    const createdChat = await createChat()
+    const followerUser = await User.findByIdAndUpdate({ _id: idFollower }, {
+      $push: {
+        'chats': {
+          chatId: createdChat._id,
+          user: idToFollow
+        },
+        'following': idToFollow
+      }
+    }, { new: true })
+
+    const followedUser = await User.findByIdAndUpdate({ _id: idToFollow }, {
+      $push: {
+        'chats': {
+          chatId: createdChat._id,
+          user: idFollower
+        },
+        'followers': idFollower
+      }
+    }, { new: true })
+    return { followerUser, followedUser, createdChat }
+  }
 }
 
 export const userFollow = async (req, res) => {
@@ -107,4 +122,14 @@ export const userFollow = async (req, res) => {
     console.log('err', err.message);
     return res.status(401).json({ error: err.message })
   })
+}
+
+async function chatExists(myId, hisId) {
+  const user = await getbyid(myId)
+  for (let i = 0; i < user.chats.length; i++) {
+    if (JSON.stringify(user.chats[i].user) === JSON.stringify(hisId)) {
+      return true
+    }
+  }
+  return false
 }
