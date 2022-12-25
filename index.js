@@ -4,12 +4,12 @@ import router from './src/routes/index.js'
 import config from './config.js'
 import cors from 'cors'
 const app = express()
+app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({
     extended:true
 }))
 app.use(router)
-app.use(cors())
 const src = config.db
 const PORT = config.port || 5000
 mongoose.set('strictQuery', false)

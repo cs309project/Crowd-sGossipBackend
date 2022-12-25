@@ -7,5 +7,5 @@ router.get('/',userController.get)
 router.get('/user/:id',userController.userPage)
 router.post("/register", userController.register);
 router.post("/login", userController.login);
-router.post('/userSearch', userController.userSearch)
+router.get('/userSearch', userController.userSearch)
 export default router

@@ -9,21 +9,23 @@ const hashPass = (password) => {
 
 export const get = async (req,res)=>{
     const user = await User.find().select('-password')
-    res.send(user)
+    return res.status(200).json(user)
 }
 
 
 export const register = async (req, res, next) => {
+  console.log(req.body)
   try {
-    const { username, email, password } = req.body;
+    const { name, email, password } = req.body;
     const emailCheck = await User.findOne({ email });
     if (emailCheck)
       return res.json({ msg: "Email already used ", status: false });
     const user = await User.create({
       email:email,
-      name:username,
+      name:name,
       password: hashPass(password),
     });
+    user.password = null;
     return res.status(200).json(user);
   } catch (ex) {
     next(ex);
@@ -35,13 +37,13 @@ export const login = async (req, res, next) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email:email });
     if (!user)
-      return res.status(401).json({msg: "Incorrect username or password"});
-    const ispasswordValid = await bcrypt.compareSync(`${password}${config.paper}`, user.password);
+      return res.json({msg: "Incorrect username or password",status:false});
+    const ispasswordValid = bcrypt.compareSync(`${password}${config.paper}`, user.password);
     if (!ispasswordValid)
-      return res.json({ msg: "Incorrect username or password", status: false });
+      return res.json({ msg: "Incorrect username or password",status:false});
 
-    delete user.password;
-    return res.status(200).json(user);
+    user.password = null;
+    return res.status(200).json({user,status:true});
   } catch (ex) {
     next(ex);
   }
@@ -50,15 +52,15 @@ export const login = async (req, res, next) => {
 
 export const userSearch=async(req,res)=>{
   let {
-      sname
-  } = req.body
-  const users=await User.find({name: { $regex: sname, $options: "i" }}).select('name','_id')
+    sname
+  } = req.query
+  const users=await User.find({name: { $regex: sname, $options: "i" }}).select('name')
   return res.json({ status: true, users })
 }
 export const userPage= async (req, res)=> {
   var id = req.params.id;
   if (!id){
-    return res.status(401).send({ error: "No ID provided " });
+    return res.status(401).json({ error: "No ID provided " });
     
   }
   else{
