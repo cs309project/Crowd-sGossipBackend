@@ -9,9 +9,9 @@ const hashPass = (password) => {
   return bcrypt.hashSync(`${password}${config.paper}`, salt);
 }
 
-export const get = async (req,res)=>{
-    const user = await User.find().select('-password')
-    return res.status(200).json(user)
+export const get = async (req, res) => {
+  const user = await User.find().select('-password')
+  return res.status(200).json(user)
 }
 
 
@@ -23,8 +23,8 @@ export const register = async (req, res, next) => {
     if (emailCheck)
       return res.json({ msg: "Email already used ", status: false });
     const user = await User.create({
-      email:email,
-      name:name,
+      email: email,
+      name: name,
       password: hashPass(password),
     });
     user.password = null;
@@ -39,13 +39,13 @@ export const login = async (req, res, next) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email: email });
     if (!user)
-      return res.json({msg: "Incorrect username or password",status:false});
+      return res.json({ msg: "Incorrect username or password", status: false });
     const ispasswordValid = bcrypt.compareSync(`${password}${config.paper}`, user.password);
     if (!ispasswordValid)
-      return res.json({ msg: "Incorrect username or password",status:false});
+      return res.json({ msg: "Incorrect username or password", status: false });
 
     user.password = null;
-    return res.status(200).json({user,status:true});
+    return res.status(200).json({ user, status: true });
   } catch (ex) {
     next(ex);
   }
@@ -56,12 +56,12 @@ export const userSearch = async (req, res) => {
   let {
     sname
   } = req.query
-  const users=await User.find({name: { $regex: sname, $options: "i" }}).select('name')
+  const users = await User.find({ name: { $regex: sname, $options: "i" } }).select('name')
   return res.json({ status: true, users })
 }
 export const userPage = async (req, res) => {
   var id = req.params.id;
-  if (!id){
+  if (!id) {
     return res.status(401).json({ error: "No ID provided " });
   }
   else {
@@ -133,4 +133,30 @@ async function chatExists(myId, hisId) {
     }
   }
   return false
+}
+
+export async function addPostToUserAndFollowers({ _id, postId }) {
+  try {
+    const user = await User.findByIdAndUpdate({ _id }, {
+      $push: {
+        'posts': {
+          $each: [postId],
+          $position: 0
+        }
+      }
+    }, { new: true })
+
+    for (let i = 0; i < user.followers.length; i++) {
+      await User.findByIdAndUpdate(user.followers[i], {
+        $push: {
+          'unreadPosts': {
+            $each: [postId],
+            $position: 0
+          }
+        }
+      })
+    }
+  } catch (error) {
+    console.log('err', error);
+  }
 }
