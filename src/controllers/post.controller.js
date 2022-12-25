@@ -1,5 +1,6 @@
 import Post from '../models/Post.model.js'
 import mongoose from 'mongoose'
+import { addPostToUserAndFollowers } from './user.controller.js'
 
 export const postAdd = async (req, res) => {
     let {
@@ -15,7 +16,8 @@ export const postAdd = async (req, res) => {
         return res.status(401).json(error)
     }
 
-    await addPost({ author, content }).then(e => {
+    await addPost({ author, content }).then(async e => {
+        await addPostToUserAndFollowers({_id: author, postId: e._id})
         return res.status(200).json(e)
     }).catch(err => {
         console.log('err', err.message);
