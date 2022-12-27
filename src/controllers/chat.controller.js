@@ -35,7 +35,6 @@ export async function deleteMessage({ _id, sender, time }) {
 
 export const getChat = async (req, res) => {
     let id = req.params.id
-    // _id = mongoose.Types.ObjectId(_id)
 
     await getChatById(id).then(e => {
         return res.status(200).json(e)
