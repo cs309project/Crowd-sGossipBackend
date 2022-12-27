@@ -21,7 +21,6 @@ export async function sendMessage({ _id, sender, message }) {
 }
 
 export async function deleteMessage({ _id, sender, time }) {
-    console.log({ _id, sender, time });
     const chatDoc = await Chat.findByIdAndUpdate({ _id }, {
         $pull: {
             'conversation': {
