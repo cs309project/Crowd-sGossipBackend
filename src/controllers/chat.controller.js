@@ -8,12 +8,9 @@ export async function createChat() {
 }
 
 export async function sendMessage({ _id, sender, message }) {
-
     const chatDoc = await Chat.findByIdAndUpdate({ _id }, {
-
         $push: {
             'conversation': {
-
                 sender,
                 message,
                 time: new Date()
@@ -24,6 +21,7 @@ export async function sendMessage({ _id, sender, message }) {
 }
 
 export async function deleteMessage({ _id, sender, time }) {
+    console.log({ _id, sender, time });
     const chatDoc = await Chat.findByIdAndUpdate({ _id }, {
         $pull: {
             'conversation': {
@@ -36,11 +34,11 @@ export async function deleteMessage({ _id, sender, time }) {
 }
 
 export const getChat = async (req, res) => {
-    let { _id } = req.body
-    _id = mongoose.Types.ObjectId(_id)
+    let id = req.params.id
+    // _id = mongoose.Types.ObjectId(_id)
 
-    await getChatById(_id).then(e => {
-        return res.status(200).json(e.conversation)
+    await getChatById(id).then(e => {
+        return res.status(200).json(e)
     }).catch((err) => {
         console.log("error", err.message);
         return res.status(401).json({ err: err.message })
