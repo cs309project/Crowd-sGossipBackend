@@ -12,4 +12,7 @@ router.post("/login", userController.login);
 router.post('/userSearch',AuthMiddleWare, userController.userSearch)
 router.post('/followUser',AuthMiddleWare, userController.userFollow)
 router.post('/unfollowUser',AuthMiddleWare, userController.userUnfollow)
+router.post('/block',AuthMiddleWare,userController.block)
+router.post('/unblock',AuthMiddleWare,userController.unblock)
+
 export default router
