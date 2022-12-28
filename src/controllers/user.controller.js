@@ -160,3 +160,37 @@ export async function addPostToUserAndFollowers({ _id, postId }) {
     console.log('err', error);
   }
 }
+
+async function unfollowUser({ idFollower, idToUnfollow }) {
+  const follower = await User.findByIdAndUpdate({ _id: idFollower }, {
+    $pull: {
+      'following': idToUnfollow
+    }
+  }, { new: true })
+
+  const unfollowed = await User.findByIdAndUpdate({ _id: idToUnfollow }, {
+    $pull: {
+      'followers': idFollower
+    }
+  }, { new: true })
+  return { follower, unfollowed }
+}
+
+export const userUnfollow = async (req, res) => {
+  let { idFollower, idToUnfollow } = req.body
+  idFollower = mongoose.Types.ObjectId(idFollower)
+  idToUnfollow = mongoose.Types.ObjectId(idToUnfollow)
+
+  if (!idFollower || !idToUnfollow) {
+    let error = { error: "unknown user" }
+    console.log('error', error);
+    return res.status(400).json(error)
+  }
+
+  await unfollowUser({ idFollower, idToUnfollow }).then(e => {
+    return res.status(200).json(e)
+  }).catch(err => {
+    console.log('err', err.message);
+    return res.status(401).json({ error: err.message })
+  })
+}
