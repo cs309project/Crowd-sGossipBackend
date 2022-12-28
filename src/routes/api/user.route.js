@@ -13,4 +13,5 @@ router.post('/userSearch',AuthMiddleWare, userController.userSearch)
 router.post('/followUser',AuthMiddleWare, userController.userFollow)
 router.post('/unfollowUser',AuthMiddleWare, userController.userUnfollow)
 router.post('/addImage',AuthMiddleWare,userController.addImage)
+router.post('/update',AuthMiddleWare,userController.update)
 export default router

@@ -219,3 +219,19 @@ export const addImage = async (req,res)=>{
     return res.status(401).json({err:err.message})
   }
 }
+
+export const update = async (req,res)=>{
+  const {photo,name} = req.body
+  let id = req.user._id
+  try{
+    id = mongoose.Types.ObjectId(id)
+    const user =  await User.findByIdAndUpdate(id,{$set:{
+      photo:photo,
+      name:name
+    }},{new:true})
+    return res.status(200).json(user)
+  }catch(err){
+    console.log(err)
+    return res.status(401).json(err.message)
+  }
+}
