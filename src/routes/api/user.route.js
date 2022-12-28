@@ -9,4 +9,5 @@ router.post("/register", userController.register);
 router.post("/login", userController.login);
 router.post('/userSearch', userController.userSearch)
 router.post('/followUser', userController.userFollow)
+router.post('/unfollowUser', userController.userUnfollow)
 export default router
