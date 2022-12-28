@@ -17,7 +17,6 @@ export const get = async (req, res) => {
 
 
 export const register = async (req, res, next) => {
-  console.log(req.body)
   try {
     const { name, email, password } = req.body;
     const emailCheck = await User.findOne({ email });
