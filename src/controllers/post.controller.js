@@ -98,9 +98,9 @@ async function addCommentToPost({ _id, commenter, comment, time }) {
 }
 
 export const postAddComment = async (req, res) => {
-    let { _id, commenter, comment } = req.body
+    let { _id, comment } = req.body
     _id = mongoose.Types.ObjectId(_id)
-    commenter = mongoose.Types.ObjectId(commenter)
+    let commenter = mongoose.Types.ObjectId(req.user._id)
     const time = new Date()
 
     if (!_id) {
@@ -130,9 +130,9 @@ async function updateComment({ _id, commenter, time, updatedComment }) {
 }
 
 export const postUpdateComment = async (req, res) => {
-    let { _id, commenter, time, updatedComment } = req.body
+    let { _id, time, updatedComment } = req.body
     _id = mongoose.Types.ObjectId(_id)
-    commenter = mongoose.Types.ObjectId(commenter)
+    let commenter = mongoose.Types.ObjectId(req.user._id)
     time = new Date(time)
 
     if (!commenter || !time) {
@@ -156,9 +156,9 @@ async function addDownVoterInPost({ _id, downVoters }) {
 }
 
 export const postAddDownVoter = async (req, res) => {
-    let { _id, downVoters } = req.body
+    let { _id } = req.body
     _id = mongoose.Types.ObjectId(_id)
-    downVoters = mongoose.Types.ObjectId(downVoters)
+    let downVoter = mongoose.Types.ObjectId(req.user._id)
 
     if (!_id) {
         let error = { error: "Post can not found" }
@@ -166,13 +166,13 @@ export const postAddDownVoter = async (req, res) => {
         return res.status(400).json(error)
     }
 
-    if (!downVoters) {
+    if (!downVoter) {
         let error = { error: "User not found" }
         console.log('error', error)
         return res.status(400).json(error)
     }
 
-    await addDownVoterInPost({ _id, downVoters }).then(e => {
+    await addDownVoterInPost({ _id, downVoter }).then(e => {
         return res.status(200).json(e)
     }).catch(err => {
         console.log('err', err.message);
@@ -181,9 +181,9 @@ export const postAddDownVoter = async (req, res) => {
 }
 
 export const postAddUpVote = async (req, res) => {
-    let { _id, upVoter } = req.body
+    let { _id } = req.body
     _id = mongoose.Types.ObjectId(_id)
-    upVoter = mongoose.Types.ObjectId(upVoter)
+    let upVoter = mongoose.Types.ObjectId(req.user._id)
 
     if (!_id || !upVoter) {
         let error = { error: "unknown post or user" }
@@ -199,16 +199,16 @@ export const postAddUpVote = async (req, res) => {
     })
 }
 
-async function removeDownVoterInPost({_id , downVoters}){
+async function removeDownVoterInPost({_id , downVoter}){
     return Post.findByIdAndUpdate({_id}, {
-        $pull: {'downVoters': downVoters}
+        $pull: {'downVoters': downVoter}
     }, {new: true});
 }
 
 export const postRemoveDownVoter = async (req, res) => {
-    let { _id, downVoters } = req.body
+    let { _id } = req.body
     _id = mongoose.Types.ObjectId(_id)
-    downVoters = mongoose.Types.ObjectId(downVoters)
+    let downVoter = mongoose.Types.ObjectId(req.user._id)
 
     if (!_id) {
         let error = { error: "Post can not found" }
@@ -216,13 +216,13 @@ export const postRemoveDownVoter = async (req, res) => {
         return res.status(400).json(error)
     }
 
-    if (!downVoters) {
+    if (!downVoter) {
         let error = { error: "User not found" }
         console.log('error', error)
         return res.status(400).json(error)
     }
 
-    await removeDownVoterInPost({ _id, downVoters }).then(e => {
+    await removeDownVoterInPost({ _id, downVoter }).then(e => {
         return res.status(200).json(e)
     }).catch(err => {
         console.log('err', err.message);
@@ -237,9 +237,9 @@ async function AddUpVote({ _id, upVoter }) {
 }
 
 export const postRemoveUpVote = async (req, res) => {
-    let { _id, upVoter } = req.body
+    let { _id } = req.body
     _id = mongoose.Types.ObjectId(_id)
-    upVoter = mongoose.Types.ObjectId(upVoter)
+    let upVoter = mongoose.Types.ObjectId(req.user._id)
 
     if (!_id || !upVoter) {
         let error = { error: "unknown post or user" }
@@ -302,9 +302,9 @@ async function deleteComment({ _id, commenter, time }) {
 }
 
 export const postDeleteComment = async (req, res) => {
-    let { _id, commenter, time } = req.body
+    let { _id, time } = req.body
     _id = mongoose.Types.ObjectId(_id)
-    commenter = mongoose.Types.ObjectId(commenter)
+    let commenter = mongoose.Types.ObjectId(req.user._id)
     time = new Date(time)
 
     if (!_id) {

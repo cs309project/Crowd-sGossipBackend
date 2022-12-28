@@ -5,7 +5,6 @@ import config from './config.js'
 import cors from 'cors'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import Chat from './src/models/Chat.model.js'
 import { sendMessage, deleteMessage, } from './src/controllers/chat.controller.js'
 const app = express()
 app.use(cors())

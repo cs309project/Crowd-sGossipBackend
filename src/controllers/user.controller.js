@@ -61,8 +61,13 @@ export const userSearch = async (req, res) => {
   return res.json({ status: true, users })
 }
 export const userPage = async (req, res) => {
-  var id = req.user._id;
-  if (!id) {
+  var id = req.params.id;
+  let checkId =  typeof id !== undefined && id.length === 24
+  console.log(req.params)
+  if (!checkId) {
+    id = req.user._id
+  }
+  if(!id){
     return res.status(401).json({ error: "No ID provided " });
   }
   else {

@@ -14,19 +14,20 @@ const tokenValidateMiddleWare = (req,res,next)=>{
                     next();
                 }else{
                     res.status(401);
-                    const error = new Error("login error please try again")
+                    const error = new Error("login error please try agai")
                     next(error);
                 }
             }
         }else {
             res.status(401);
-            const error = new Error("login error please try again")
+            const error = new Error("no token found")
             next(error)
         }
     } catch (error) {
         res.status(401)
         next(error)
     }
+    
 };
 
 export default tokenValidateMiddleWare
