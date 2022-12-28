@@ -44,6 +44,10 @@ const UserSchema = new Schema({
     blocked: {
         type: Boolean,
         default: false,
+    },
+    photo: {
+        type:String,
+        default: "",
     }
 })
 

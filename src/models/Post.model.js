@@ -28,7 +28,11 @@ const PostSchema = new Schema({
         type : Array,
         default : []
     },
-    comments:[]
+    comments:[],
+    photo: {
+        type:String,
+        default: "",
+    }
 },{timestamps: true })
 
 export default model.Posts || model("Post", PostSchema);

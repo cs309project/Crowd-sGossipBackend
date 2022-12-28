@@ -6,6 +6,8 @@ import cors from 'cors'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import { sendMessage, deleteMessage, } from './src/controllers/chat.controller.js'
+import ImageKit from 'imagekit'
+
 const app = express()
 app.use(cors())
 const socketServer = createServer()
@@ -27,9 +29,20 @@ mongoose.connect(src).then(() => console.log('database connection succesful'))
 
 socketServer.listen(ioPort, () => console.log(`Socket running on ${ioPort}`))
 
+const imagekit = new ImageKit({
+    urlEndpoint: 'https://ik.imagekit.io/CrowdsGossip1/',
+    publicKey: 'public_X7yTliORSXHPEjwCoN+adNnMArw=',
+    privateKey: 'private_AGeIN5Yt4/HMheVPTzI/PX59fHQ='
+});
+
+app.get('/auth', function (req, res) {
+    var result = imagekit.getAuthenticationParameters();
+    res.send(result);
+});
 const server = app.listen(PORT, () => {
     console.log('app running on port ', PORT)
 })
+
 
 io.on('connect', socket => {
 
