@@ -5,7 +5,7 @@ const router = Router()
 
 
 router.get('/',AuthMiddleWare,userController.get)
-router.get('/user/:id',AuthMiddleWare,userController.userPage)
+router.get('/user',AuthMiddleWare,userController.userPage)
 router.post("/register", userController.register);
 router.post("/login", userController.login);
 router.post('/userSearch',AuthMiddleWare, userController.userSearch)

@@ -62,7 +62,7 @@ export const userSearch = async (req, res) => {
   return res.json({ status: true, users })
 }
 export const userPage = async (req, res) => {
-  var id = req.params.id;
+  var id = req.user._id;
   if (!id) {
     return res.status(401).json({ error: "No ID provided " });
   }
@@ -115,7 +115,8 @@ const followUser = async ({ idFollower, idToFollow }) => {
 }
 
 export const userFollow = async (req, res) => {
-  let { idFollower, idToFollow } = req.body
+  let { idToFollow } = req.body
+  let idFollower = req.user._id
   idFollower = mongoose.Types.ObjectId(idFollower)
   idToFollow = mongoose.Types.ObjectId(idToFollow)
 
@@ -179,7 +180,8 @@ async function unfollowUser({ idFollower, idToUnfollow }) {
 }
 
 export const userUnfollow = async (req, res) => {
-  let { idFollower, idToUnfollow } = req.body
+  let { idToUnfollow } = req.body
+  let idFollower = req.user._id
   idFollower = mongoose.Types.ObjectId(idFollower)
   idToUnfollow = mongoose.Types.ObjectId(idToUnfollow)
 
