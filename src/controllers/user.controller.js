@@ -202,3 +202,20 @@ export const userUnfollow = async (req, res) => {
     return res.status(401).json({ error: err.message })
   })
 }
+
+export const addImage = async (req,res)=>{
+  const { photo } = req.body
+  let id = req.user._id
+  id = mongoose.Types.ObjectId(id)
+  try {
+    const user = await User.findByIdAndUpdate({ _id:id }, {
+      $set: {
+        'photo': photo
+      }
+    }, { new: true })
+    res.status(200).json(user)
+  }catch(err){
+    console.log('err',err.message)
+    return res.status(401).json({err:err.message})
+  }
+}
