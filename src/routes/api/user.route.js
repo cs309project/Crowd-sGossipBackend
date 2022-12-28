@@ -1,13 +1,14 @@
 import { Router } from "express";
 import * as userController from '../../controllers/user.controller.js'
+import AuthMiddleWare from "../../middleWare/authMiddleware.js"
 const router = Router()
 
 
-router.get('/',userController.get)
-router.get('/user/:id',userController.userPage)
+router.get('/',AuthMiddleWare,userController.get)
+router.get('/user/:id',AuthMiddleWare,userController.userPage)
 router.post("/register", userController.register);
 router.post("/login", userController.login);
-router.post('/userSearch', userController.userSearch)
-router.post('/followUser', userController.userFollow)
-router.post('/unfollowUser', userController.userUnfollow)
+router.post('/userSearch',AuthMiddleWare, userController.userSearch)
+router.post('/followUser',AuthMiddleWare, userController.userFollow)
+router.post('/unfollowUser',AuthMiddleWare, userController.userUnfollow)
 export default router

@@ -3,6 +3,7 @@ import config from '../../config.js'
 import User from '../models/User.model.js'
 import { createChat } from '../controllers/chat.controller.js'
 import mongoose from "mongoose"
+import jwt from "jsonwebtoken"
 
 const hashPass = (password) => {
   const salt = parseInt(config.salt, 10);
@@ -44,8 +45,9 @@ export const login = async (req, res, next) => {
     if (!ispasswordValid)
       return res.json({ msg: "Incorrect username or password", status: false });
 
+    const token = jwt.sign({user},config.token)
     user.password = null;
-    return res.status(200).json({ user, status: true });
+    return res.status(200).json({token, user, status: true });
   } catch (ex) {
     next(ex);
   }
