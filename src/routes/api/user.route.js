@@ -12,4 +12,5 @@ router.post("/login", userController.login);
 router.post('/userSearch',AuthMiddleWare, userController.userSearch)
 router.post('/followUser',AuthMiddleWare, userController.userFollow)
 router.post('/unfollowUser',AuthMiddleWare, userController.userUnfollow)
+router.post('/addImage',AuthMiddleWare,userController.addImage)
 export default router
