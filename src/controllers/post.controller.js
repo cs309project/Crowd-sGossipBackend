@@ -4,10 +4,9 @@ import { addPostToUserAndFollowers } from './user.controller.js'
 
 export const postAdd = async (req, res) => {
     let {
-        author,
         content
     } = req.body
-
+    let author = req.user._id
     author = mongoose.Types.ObjectId(author)
 
     if (!author || !content) {
