@@ -1,10 +1,9 @@
 import Post from '../models/Post.model.js'
 import mongoose from 'mongoose'
 import { addPostToUserAndFollowers, removePostToUserAndFollowers } from './user.controller.js'
-
 export const postAdd = async (req, res) => {
     let {
-        content
+        content,photo
     } = req.body
     let author = req.user._id
     author = mongoose.Types.ObjectId(author)
@@ -15,7 +14,7 @@ export const postAdd = async (req, res) => {
         return res.status(401).json(error)
     }
 
-    await addPost({ author, content }).then(async e => {
+    await addPost({ author, content,photo }).then(async e => {
         await addPostToUserAndFollowers({_id: author, postId: e._id})
         return res.status(200).json(e)
     }).catch(err => {
@@ -24,10 +23,11 @@ export const postAdd = async (req, res) => {
     })
 }
 
-async function addPost({ author, content }) {
+async function addPost({ author, content,photo }) {
     const newPost = new Post({
         author,
-        content
+        content,
+        photo:photo?photo:"",
     })
     await newPost.save()
     return newPost
