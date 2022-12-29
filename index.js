@@ -50,7 +50,7 @@ io.on('connect', socket => {
     socket.on('sendMessage', async data => {
         const { _id, sender, message } = data
         await sendMessage({ _id, sender, message })
-        socket.emit('chatUpdated')
+        io.emit('chatUpdated')
     })
 
     socket.on('deleteMessage', async data => {
@@ -58,7 +58,7 @@ io.on('connect', socket => {
         _id = mongoose.Types.ObjectId(_id)
         time = new Date(time)
         await deleteMessage({ _id, sender, time })
-        socket.emit('chatUpdated')
+        io.emit('chatUpdated')
     })
 })
 
