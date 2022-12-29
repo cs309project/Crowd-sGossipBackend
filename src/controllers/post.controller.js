@@ -159,7 +159,7 @@ async function addDownVoterInPost({ _id, downVoters }) {
 export const postAddDownVoter = async (req, res) => {
     let { _id } = req.body
     _id = mongoose.Types.ObjectId(_id)
-    let downVoter = mongoose.Types.ObjectId(req.user._id)
+    let downVoters = mongoose.Types.ObjectId(req.user._id)
 
     if (!_id) {
         let error = { error: "Post can not found" }
@@ -167,13 +167,13 @@ export const postAddDownVoter = async (req, res) => {
         return res.status(400).json(error)
     }
 
-    if (!downVoter) {
+    if (!downVoters) {
         let error = { error: "User not found" }
         console.log('error', error)
         return res.status(400).json(error)
     }
 
-    await addDownVoterInPost({ _id, downVoter }).then(e => {
+    await addDownVoterInPost({ _id,  downVoters }).then(e => {
         return res.status(200).json(e)
     }).catch(err => {
         console.log('err', err.message);
@@ -304,6 +304,7 @@ async function deleteComment({ _id, commenter, time }) {
 
 export const postDeleteComment = async (req, res) => {
     let { _id, time } = req.body
+    console.log(req.body);
     _id = mongoose.Types.ObjectId(_id)
     let commenter = mongoose.Types.ObjectId(req.user._id)
     time = new Date(time)
