@@ -50,7 +50,7 @@ export const login = async (req, res, next) => {
       return res.status(200).json({ token, user, status: true });
     }
     else {
-      return res.status(403).json({ msg: "Account has been blocked contact admin for more info" })
+      return res.status(200).json({ msg: "Account has been blocked contact admin for more info", status: false })
     }
   } catch (ex) {
     next(ex);
