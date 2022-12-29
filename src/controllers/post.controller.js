@@ -1,6 +1,6 @@
 import Post from '../models/Post.model.js'
 import mongoose from 'mongoose'
-import { addPostToUserAndFollowers } from './user.controller.js'
+import { addPostToUserAndFollowers, removePostToUserAndFollowers } from './user.controller.js'
 
 export const postAdd = async (req, res) => {
     let {
@@ -60,7 +60,8 @@ export const postDelete = async (req, res) => {
         console.log('error', error);
         return res.status(401).json(error)
     }
-    await deletePost(_id).then(e => {
+    await deletePost(_id).then(async e => {
+        await removePostToUserAndFollowers({_id: e.author, postId: e._id})
         return res.status(200).json(e)
     }).catch(err => {
         console.log('err', err.message);

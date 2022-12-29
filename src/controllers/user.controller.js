@@ -219,3 +219,23 @@ export const addImage = async (req,res)=>{
     return res.status(401).json({err:err.message})
   }
 }
+
+export async function removePostToUserAndFollowers({ _id, postId }) {
+  try {
+    const user = await User.findByIdAndUpdate({ _id }, {
+      $pull: {
+        'posts': postId
+      }
+    }, { new: true })
+
+    for (let i = 0; i < user.followers.length; i++) {
+      await User.findByIdAndUpdate(user.followers[i], {
+        $pull: {
+          'unreadPosts': postId
+        }
+      })
+    }
+  } catch (error) {
+    console.log('err', error);
+  }
+}
