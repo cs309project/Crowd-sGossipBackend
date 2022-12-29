@@ -15,4 +15,7 @@ router.post('/unfollowUser',AuthMiddleWare, userController.userUnfollow)
 router.post('/block',AuthMiddleWare,userController.block)
 router.post('/unblock',AuthMiddleWare,userController.unblock)
 
+router.post('/addImage',AuthMiddleWare,userController.addImage)
+router.post('/update',AuthMiddleWare,userController.update)
+
 export default router

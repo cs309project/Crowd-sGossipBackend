@@ -1,3 +1,4 @@
+import config from '../../config.js';
 import { Schema, model } from 'mongoose';
 
 const UserSchema = new Schema({
@@ -47,7 +48,7 @@ const UserSchema = new Schema({
     },
     photo: {
         type:String,
-        default: "",
+        default: config.defaultPhoto,
     }
 })
 

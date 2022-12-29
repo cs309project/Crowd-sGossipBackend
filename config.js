@@ -6,7 +6,8 @@ const {
     PORT,
     PAPER,
     SALT,
-    TOKEN
+    TOKEN,
+    DEFUALTAVATAR,
 } = process.env
 
 export default{
@@ -14,5 +15,6 @@ export default{
     db:db,
     paper:PAPER,
     salt:SALT,
-    token:TOKEN
+    token:TOKEN,
+    defaultPhoto:DEFUALTAVATAR,
 }

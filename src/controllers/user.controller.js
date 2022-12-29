@@ -208,6 +208,7 @@ export const userUnfollow = async (req, res) => {
   })
 }
 
+
 export const block = async (req, res) => {
   let { id } = req.body
   try {
@@ -240,3 +241,37 @@ export const unblock = async (req, res) => {
   }
 
 }
+
+export const addImage = async (req,res)=>{
+  const { photo } = req.body
+  let id = req.user._id
+  id = mongoose.Types.ObjectId(id)
+  try {
+    const user = await User.findByIdAndUpdate({ _id:id }, {
+      $set: {
+        'photo': photo
+      }
+    }, { new: true })
+    res.status(200).json(user)
+  }catch(err){
+    console.log('err',err.message)
+    return res.status(401).json({err:err.message})
+  }
+}
+
+export const update = async (req,res)=>{
+  const {photo,name} = req.body
+  let id = req.user._id
+  try{
+    id = mongoose.Types.ObjectId(id)
+    const user =  await User.findByIdAndUpdate(id,{$set:{
+      photo:photo,
+      name:name
+    }},{new:true})
+    return res.status(200).json(user)
+  }catch(err){
+    console.log(err)
+    return res.status(401).json(err.message)
+  }
+}
+
