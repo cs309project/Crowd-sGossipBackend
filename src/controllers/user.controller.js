@@ -43,10 +43,15 @@ export const login = async (req, res, next) => {
     const ispasswordValid = bcrypt.compareSync(`${password}${config.paper}`, user.password);
     if (!ispasswordValid)
       return res.json({ msg: "Incorrect username or password", status: false });
+    if (!user.blocked) {
+      user.password = null;
+      const token = jwt.sign({ user }, config.token)
 
-    const token = jwt.sign({user},config.token)
-    user.password = null;
-    return res.status(200).json({token, user, status: true });
+      return res.status(200).json({ token, user, status: true });
+    }
+    else {
+      return res.status(403).json({ msg: "Account has been blocked contact admin for more info" })
+    }
   } catch (ex) {
     next(ex);
   }
@@ -62,12 +67,12 @@ export const userSearch = async (req, res) => {
 }
 export const userPage = async (req, res) => {
   var id = req.params.id;
-  let checkId =  typeof id !== undefined && id.length === 24
+  let checkId = typeof id !== undefined && id.length === 24
   console.log(req.params)
   if (!checkId) {
     id = req.user._id
   }
-  if(!id){
+  if (!id) {
     return res.status(401).json({ error: "No ID provided " });
   }
   else {
@@ -203,6 +208,40 @@ export const userUnfollow = async (req, res) => {
   })
 }
 
+
+export const block = async (req, res) => {
+  let { id } = req.body
+  try {
+    let uid = mongoose.Types.ObjectId(id)
+    const user = await User.findByIdAndUpdate(uid, {
+      $set: {
+        'blocked': true
+      }
+    }, { new: true })
+    return res.status(200).json(user)
+  } catch (err) {
+    console.log(err)
+    return res.status(400).json({ error: err.message })
+  }
+
+}
+export const unblock = async (req, res) => {
+  let { id } = req.body
+  try {
+    let uid = mongoose.Types.ObjectId(id)
+    const user = await User.findByIdAndUpdate(uid, {
+      $set: {
+        'blocked': false
+      }
+    }, { new: true })
+    return res.status(200).json(user)
+  } catch (err) {
+    console.log(err)
+    return res.status(400).json({ error: err.message })
+  }
+
+}
+
 export const addImage = async (req,res)=>{
   const { photo } = req.body
   let id = req.user._id
@@ -239,3 +278,19 @@ export async function removePostToUserAndFollowers({ _id, postId }) {
     console.log('err', error);
   }
 }
+export const update = async (req,res)=>{
+  const {photo,name} = req.body
+  let id = req.user._id
+  try{
+    id = mongoose.Types.ObjectId(id)
+    const user =  await User.findByIdAndUpdate(id,{$set:{
+      photo:photo,
+      name:name
+    }},{new:true})
+    return res.status(200).json(user)
+  }catch(err){
+    console.log(err)
+    return res.status(401).json(err.message)
+  }
+}
+
