@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 import { addPostToUserAndFollowers, removePostToUserAndFollowers } from './user.controller.js'
 export const postAdd = async (req, res) => {
     let {
-        content,photo
+        content, photo
     } = req.body
     let author = req.user._id
     author = mongoose.Types.ObjectId(author)
@@ -14,8 +14,8 @@ export const postAdd = async (req, res) => {
         return res.status(401).json(error)
     }
 
-    await addPost({ author, content,photo }).then(async e => {
-        await addPostToUserAndFollowers({_id: author, postId: e._id})
+    await addPost({ author, content, photo }).then(async e => {
+        await addPostToUserAndFollowers({ _id: author, postId: e._id })
         return res.status(200).json(e)
     }).catch(err => {
         console.log('err', err.message);
@@ -23,11 +23,11 @@ export const postAdd = async (req, res) => {
     })
 }
 
-async function addPost({ author, content,photo }) {
+async function addPost({ author, content, photo }) {
     const newPost = new Post({
         author,
         content,
-        photo:photo?photo:"",
+        photo: photo ? photo : "",
     })
     await newPost.save()
     return newPost
@@ -51,7 +51,7 @@ export const postUpdate = async (req, res) => {
     })
 }
 export const postDelete = async (req, res) => {
-    let _id  = req.params.id
+    let _id = req.params.id
 
     _id = mongoose.Types.ObjectId(_id)
 
@@ -61,7 +61,7 @@ export const postDelete = async (req, res) => {
         return res.status(401).json(error)
     }
     await deletePost(_id).then(async e => {
-        await removePostToUserAndFollowers({_id: e.author, postId: e._id})
+        await removePostToUserAndFollowers({ _id: e.author, postId: e._id })
         return res.status(200).json(e)
     }).catch(err => {
         console.log('err', err.message);
@@ -83,19 +83,19 @@ export const postGet = async (req, res) => {
 
 async function updatePost({ _id, content }) {
 
-    return Post.findByIdAndUpdate({_id}, {content}, {new: true});
+    return Post.findByIdAndUpdate({ _id }, { content }, { new: true });
 }
 
 async function deletePost({ _id }) {
-    return Post.findByIdAndDelete({_id});
+    return Post.findByIdAndDelete({ _id });
 }
 
 async function getPostById({ _id }) {
-    return Post.findById({_id});
+    return Post.findById({ _id });
 }
 // _id is post id, commenter is commenter id, comment is comment text and time is the time at which the comment was added
 async function addCommentToPost({ _id, commenter, comment, time }) {
-    return Post.findByIdAndUpdate({_id}, {$push: {"comments": {commenter, comment, time}}}, {new: true})
+    return Post.findByIdAndUpdate({ _id }, { $push: { "comments": { commenter, comment, time } } }, { new: true })
 }
 
 export const postAddComment = async (req, res) => {
@@ -125,9 +125,9 @@ export const postAddComment = async (req, res) => {
 }
 
 async function updateComment({ _id, commenter, time, updatedComment }) {
-    return Post.findByIdAndUpdate({_id}, {
-        $set: {'comments.$[comment].comment': updatedComment}
-    }, {arrayFilters: [{'comment.commenter': commenter, 'comment.time': time}], new: true});
+    return Post.findByIdAndUpdate({ _id }, {
+        $set: { 'comments.$[comment].comment': updatedComment }
+    }, { arrayFilters: [{ 'comment.commenter': commenter, 'comment.time': time }], new: true });
 }
 
 export const postUpdateComment = async (req, res) => {
@@ -151,9 +151,9 @@ export const postUpdateComment = async (req, res) => {
 }
 
 async function addDownVoterInPost({ _id, downVoters }) {
-    return Post.findByIdAndUpdate({_id}, {
-        $push: {'downVoters': downVoters}
-    }, {new: true});
+    return Post.findByIdAndUpdate({ _id }, {
+        $push: { 'downVoters': downVoters }
+    }, { new: true });
 }
 
 export const postAddDownVoter = async (req, res) => {
@@ -173,7 +173,7 @@ export const postAddDownVoter = async (req, res) => {
         return res.status(400).json(error)
     }
 
-    await addDownVoterInPost({ _id,  downVoters }).then(e => {
+    await addDownVoterInPost({ _id, downVoters }).then(e => {
         return res.status(200).json(e)
     }).catch(err => {
         console.log('err', err.message);
@@ -200,10 +200,10 @@ export const postAddUpVote = async (req, res) => {
     })
 }
 
-async function removeDownVoterInPost({_id , downVoter}){
-    return Post.findByIdAndUpdate({_id}, {
-        $pull: {'downVoters': downVoter}
-    }, {new: true});
+async function removeDownVoterInPost({ _id, downVoter }) {
+    return Post.findByIdAndUpdate({ _id }, {
+        $pull: { 'downVoters': downVoter }
+    }, { new: true });
 }
 
 export const postRemoveDownVoter = async (req, res) => {
@@ -232,9 +232,9 @@ export const postRemoveDownVoter = async (req, res) => {
 }
 
 async function AddUpVote({ _id, upVoter }) {
-    return Post.findByIdAndUpdate({_id}, {
-        $push: {'upVoters': upVoter}
-    }, {new: true});
+    return Post.findByIdAndUpdate({ _id }, {
+        $push: { 'upVoters': upVoter }
+    }, { new: true });
 }
 
 export const postRemoveUpVote = async (req, res) => {
@@ -257,16 +257,17 @@ export const postRemoveUpVote = async (req, res) => {
 }
 
 export const postListDownVoters = async (req, res) => {
-    let { _id } = req.body
-    _id = mongoose.Types.ObjectId(_id)
+    let { id } = req.params
+    id = mongoose.Types.ObjectId(id)
 
-    if (!_id) {
+    if (!id) {
         let error = { error: "Post can not found" }
         console.log('error', error);
         return res.status(401).json(error)
     }
-    await getPostById({ _id }).then(e => {
-        res.status(200).json(e.downVoters)
+    await getPostById({ _id: id }).then(e => {
+        const voted = e.downVoters.includes(req.user._id)
+        res.status(200).json({ data: e.downVoters, voted })
     }).catch(err => {
         console.log('err', err.message);
         return res.status(401).json({ error: err.message })
@@ -274,22 +275,23 @@ export const postListDownVoters = async (req, res) => {
 }
 
 async function RemoveUpVote({ _id, upVoter }) {
-    return Post.findByIdAndUpdate({_id}, {
-        $pull: {'upVoters': upVoter}
-    }, {new: true});
+    return Post.findByIdAndUpdate({ _id }, {
+        $pull: { 'upVoters': upVoter }
+    }, { new: true });
 }
 
 export const postGetUpVoters = async (req, res) => {
-    let { _id } = req.body
-    _id = mongoose.Types.ObjectId(_id)
+    let { id } = req.params
+    id = mongoose.Types.ObjectId(id)
 
-    if (!_id) {
+    if (!id) {
         let error = { error: "No id provided" }
         console.log('error', error);
         return res.status(401).json(error)
     }
-    await getPostById({ _id }).then(e => {
-        res.status(200).json(e.upVoters)
+    await getPostById({ _id: id }).then(e => {
+        const voted = e.upVoters.includes(req.user._id)
+        return res.status(200).json({ data: e.upVoters, voted })
     }).catch(err => {
         console.log('err', err.message);
         return res.status(401).json({ error: err.message })
@@ -297,9 +299,9 @@ export const postGetUpVoters = async (req, res) => {
 }
 
 async function deleteComment({ _id, commenter, time }) {
-    return Post.findByIdAndUpdate({_id}, {
-        $pull: {'comments': {commenter, time}}
-    }, {new: true});
+    return Post.findByIdAndUpdate({ _id }, {
+        $pull: { 'comments': { commenter, time } }
+    }, { new: true });
 }
 
 export const postDeleteComment = async (req, res) => {
