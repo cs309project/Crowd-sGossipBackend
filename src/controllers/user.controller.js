@@ -85,42 +85,54 @@ const getbyid = async (id) => {
 
 
 const followUser = async ({ idFollower, idToFollow }) => {
-  if (await chatExists(idFollower, idToFollow)) {
-    const followerUser = await User.findByIdAndUpdate({ _id: idFollower }, {
-      $push: {
-        'following': idToFollow
-      }
-    }, { new: true })
+  if (!await isFollowed({ idFollower: idFollower, idToFollow: idToFollow })) {
+    if (await chatExists(idFollower, idToFollow)) {
+      const followerUser = await User.findByIdAndUpdate({ _id: idFollower }, {
+        $push: {
+          'following': idToFollow
+        }
+      }, { new: true })
 
-    const followedUser = await User.findByIdAndUpdate({ _id: idToFollow }, {
-      $push: {
-        'followers': idFollower
-      }
-    }, { new: true })
-    return { followerUser, followedUser }
-  } else {
-    const createdChat = await createChat()
-    const followerUser = await User.findByIdAndUpdate({ _id: idFollower }, {
-      $push: {
-        'chats': {
-          chatId: createdChat._id,
-          user: idToFollow
-        },
-        'following': idToFollow
-      }
-    }, { new: true })
+      const followedUser = await User.findByIdAndUpdate({ _id: idToFollow }, {
+        $push: {
+          'followers': idFollower
+        }
+      }, { new: true })
+      return { followerUser, followedUser }
+    } else {
+      const createdChat = await createChat()
+      const followerUser = await User.findByIdAndUpdate({ _id: idFollower }, {
+        $push: {
+          'chats': {
+            chatId: createdChat._id,
+            user: idToFollow
+          },
+          'following': idToFollow
+        }
+      }, { new: true })
 
-    const followedUser = await User.findByIdAndUpdate({ _id: idToFollow }, {
-      $push: {
-        'chats': {
-          chatId: createdChat._id,
-          user: idFollower
-        },
-        'followers': idFollower
-      }
-    }, { new: true })
-    return { followerUser, followedUser, createdChat }
+      const followedUser = await User.findByIdAndUpdate({ _id: idToFollow }, {
+        $push: {
+          'chats': {
+            chatId: createdChat._id,
+            user: idFollower
+          },
+          'followers': idFollower
+        }
+      }, { new: true })
+      return { followerUser, followedUser, createdChat }
+    }
   }
+}
+
+async function isFollowed({ idFollower, idToFollow }) {
+  const user = await User.findById(idToFollow)
+  for (let i = 0; i < user.followers.length; i++) {
+    if (JSON.stringify(user.followers[i]) === JSON.stringify(idFollower)) {
+      return true
+    }
+  }
+  return false
 }
 
 export const userFollow = async (req, res) => {
@@ -242,20 +254,20 @@ export const unblock = async (req, res) => {
 
 }
 
-export const addImage = async (req,res)=>{
+export const addImage = async (req, res) => {
   const { photo } = req.body
   let id = req.user._id
   id = mongoose.Types.ObjectId(id)
   try {
-    const user = await User.findByIdAndUpdate({ _id:id }, {
+    const user = await User.findByIdAndUpdate({ _id: id }, {
       $set: {
         'photo': photo
       }
     }, { new: true })
     res.status(200).json(user)
-  }catch(err){
-    console.log('err',err.message)
-    return res.status(401).json({err:err.message})
+  } catch (err) {
+    console.log('err', err.message)
+    return res.status(401).json({ err: err.message })
   }
 }
 
@@ -278,17 +290,19 @@ export async function removePostToUserAndFollowers({ _id, postId }) {
     console.log('err', error);
   }
 }
-export const update = async (req,res)=>{
-  const {photo,name} = req.body
+export const update = async (req, res) => {
+  const { photo, name } = req.body
   let id = req.user._id
-  try{
+  try {
     id = mongoose.Types.ObjectId(id)
-    const user =  await User.findByIdAndUpdate(id,{$set:{
-      photo:photo,
-      name:name
-    }},{new:true})
+    const user = await User.findByIdAndUpdate(id, {
+      $set: {
+        photo: photo,
+        name: name
+      }
+    }, { new: true })
     return res.status(200).json(user)
-  }catch(err){
+  } catch (err) {
     console.log(err)
     return res.status(401).json(err.message)
   }
