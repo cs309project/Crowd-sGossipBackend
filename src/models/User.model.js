@@ -49,6 +49,10 @@ const UserSchema = new Schema({
     photo: {
         type:String,
         default: config.defaultPhoto,
+    },
+    Role: {
+        type: String,
+        default:"user"
     }
 })
 
