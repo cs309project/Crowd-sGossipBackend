@@ -80,7 +80,7 @@ export const userPage = async (req, res) => {
     return res.status(401).json({ error: "No ID provided " });
   }
   else {
-    getbyid(id).then(user => { return res.send(user) })
+    getbyid(id).then(user => { return res.json(user) })
   }
 }
 const getbyid = async (id) => {
