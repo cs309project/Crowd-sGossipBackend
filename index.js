@@ -40,6 +40,7 @@ app.use(express.urlencoded({
 app.use(router)
 const src = config.db
 const PORT = config.port || 5000
+const ioPort = config.ioPort
 
 mongoose.set('strictQuery', false)
 mongoose.connect(src).then(() => console.log('database connection succesful'))
