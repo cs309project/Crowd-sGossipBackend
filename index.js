@@ -22,7 +22,6 @@ app.use(express.urlencoded({
 }))
 app.use(router)
 const src = config.db
-console.log(src)
 const PORT = config.port || 5000
 const ioPort = 8001;
 mongoose.set('strictQuery', false)
