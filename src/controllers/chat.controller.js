@@ -1,5 +1,4 @@
 import Chat from '../models/Chat.model.js'
-import mongoose from 'mongoose'
 
 export async function createChat() {
     const newChat = new Chat()
