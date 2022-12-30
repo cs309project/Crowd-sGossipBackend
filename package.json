@@ -4,7 +4,7 @@
   "description": "social media app backend",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ."
+    "start": "node ."
   },
   "repository": {
     "type": "git",
