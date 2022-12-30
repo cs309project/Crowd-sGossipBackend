@@ -67,7 +67,12 @@ export const userSearch = async (req, res) => {
 }
 export const userPage = async (req, res) => {
   var id = req.params.id;
-  let checkId = typeof id !== undefined && id.length === 24
+  let checkId
+  try {
+    checkId = typeof id !== undefined && id.length === 24
+  }catch (err){
+    console.log(err.message)
+  }
   if (!checkId) {
     id = req.user._id
   }
